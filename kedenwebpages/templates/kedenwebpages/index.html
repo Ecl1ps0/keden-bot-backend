@@ -4,46 +4,60 @@
 <html lang="ru">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="viewport"
+      content="width=device-width, initial-scale=1, maximum-scale=1, viewport-fit=cover">
   <title>Keden WebApp</title>
   <link rel="stylesheet" href="{% static 'kedenwebpages/style.css' %}" />
   <script src="https://telegram.org/js/telegram-web-app.js?57"></script>
 </head>
-<body>
+<body class="some">
   <div class="container">
     <h1>Добро пожаловать в бот<br><span class="highlight">Keden!</span></h1>
     <p>Пожалуйста, введите ваши данные:</p>
 
     <form id="user-form">
+    <div class="form-group">
       <label for="lastName">Фамилия</label>
       <input type="text" id="lastName" name="lastName" required maxlength="50"/>
+    </div>
 
+    <div class="form-group">
       <label for="firstName">Имя</label>
       <input type="text" id="firstName" name="firstName" required maxlength="50"/>
+    </div>
 
+    <div class="form-group">
       <label for="middleName">Отчество</label>
       <input type="text" id="middleName" name="middleName" maxlength="50"/>
+    </div>
 
-      <label for="phone">Номер телефона</label>
-      <input type="tel"
-      id="phone"
-      name="phone"
-      inputmode="numeric"
-      pattern="^\+?[0-9]*"
-      oninput="this.value = this.value.replace(/(?!^\+)[^\d]/g, '')"
-      required
-      minlength="10"
-      maxlength="12"
-      value="+7"/>
+    <div class="form-group">
+        <label for="phone">Номер телефона</label>
+        <input
+          type="tel"
+          id="phone"
+          name="phone"
+          inputmode="numeric"
+          pattern="^\+?[0-9]*"
+          oninput="this.value = this.value.replace(/(?!^\+)[^\d]/g, '')"
+          required
+          minlength="10"
+          maxlength="12"
+          value="+7"
+        />
+      </div>
 
-      <label for="email">Электронная почта, с которой регистрировались</label>
-      <input type="email" id="email" name="email" required maxlength="100" />
+      <div class="form-group">
+        <label for="email">Электронная почта, с которой регистрировались</label>
+        <input type="email" id="email" name="email" required maxlength="100" />
+      </div>
 
-      <button type="submit" class="btn">{% if mode == 'edit' %}
-                                            Обновить
-                                          {% else %}
-                                            Сохранить
-                                          {% endif %}
+      <button type="submit" class="btn">
+        {% if mode == 'edit' %}
+          Обновить
+        {% else %}
+          Сохранить
+        {% endif %}
       </button>
     </form>
   </div>

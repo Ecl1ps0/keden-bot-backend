@@ -6,36 +6,41 @@ document.addEventListener("DOMContentLoaded", () => {
   const form = document.getElementById("user-form");
   const URL_BASE = window.appData?.django_url;
 
-  if (mode === 'edit') {
-    (async () => {
-      const result = await getContact();
-      if (!result || !result.result || result.result.length === 0) {
-        alert('Вы не зарегистрированы!')
+  (async () => {
+    const result = await getContact();
+
+    // Нормализуем результат в массив
+    const items = Array.isArray(result?.result)
+      ? result.result
+      : result?.result
+        ? [result.result]
+        : [];
+
+    const contact = items[0] || null;
+
+    if (mode === 'edit') {
+      if (!contact) {
+        alert('Вы не зарегистрированы!');
         return;
       }
-      let contact;
-      if (Array.isArray(result.result)) {
-        contact = result.result[0];
-      } else {
-        contact = result.result;
-      }
-      contactId = contact.ID
-      document.getElementById("lastName").value = contact.LAST_NAME || '';
-      document.getElementById("firstName").value = contact.NAME || '';
-      document.getElementById("middleName").value = contact.SECOND_NAME || '';
-      document.getElementById("phone").value = contact.PHONE?.[0]?.VALUE || '+7';
-      document.getElementById("email").value = contact.EMAIL?.[0]?.VALUE || '';
-    })();
-  } else {
-    (async () => {
-      const result = await getContact();
-      if (result.result && result.result.length > 0) {
-        alert('Вы уже зарегистрированы! Попробуйте наши функции')
-        tg.close()
+
+      contactId = contact.ID;
+
+      const $ = (id) => document.getElementById(id);
+
+      $('lastName').value   = contact.LAST_NAME ?? '';
+      $('firstName').value  = contact.NAME ?? '';
+      $('middleName').value = contact.SECOND_NAME ?? '';
+      $('phone').value      = contact.PHONE?.[0]?.VALUE || '+7';
+      $('email').value      = contact.EMAIL?.[0]?.VALUE || '';
+    } else {
+      if (contact) {
+        alert('Вы уже зарегистрированы! Попробуйте наши функции');
+        tg.close();
         return;
       }
-    })();
-  }
+    }
+  })();
 
   form.addEventListener("submit", async function (e) {
     e.preventDefault();
@@ -68,35 +73,22 @@ document.addEventListener("DOMContentLoaded", () => {
       }
     };
 
-    console.log(mode)
     if (mode === 'edit') {
       data.ID = contactId;
-      try {
-        const response = await fetch(`${URL_BASE}/kedenbot/register_user?mode=edit`, {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json"
-          },
-          body: JSON.stringify(data)
-        });
-        const result = await response.json();
-        console.log("Server response:", result);
-      } catch (error) {
-        console.error("Error:", error);
-      }
-    } else {
-      try {
-        const response = await fetch(`${URL_BASE}/kedenbot/register_user`, {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json"
-          },
-          body: JSON.stringify(data)
-        });
-        const result = await response.json();
-      } catch (error) {
-        console.error("Error:", error);
-      }
+    }
+
+    try {
+      const response = await fetch(`${URL_BASE}/kedenbot/register_user?mode=edit`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json"
+        },
+        body: JSON.stringify(data)
+      });
+      const result = await response.json();
+      console.log("Server response:", result);
+    } catch (error) {
+      console.error("Error:", error);
     }
     tg.close(); // закрыть WebApp
   });

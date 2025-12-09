@@ -6,6 +6,23 @@ document.addEventListener("DOMContentLoaded", () => {
     }
     tg.ready();
 
+    (async () => {
+        const result = await getContact();
+        const items = Array.isArray(result?.result)
+        ? result.result
+        : result?.result
+            ? [result.result]
+            : [];
+
+        const contact = items[0] || null;
+        
+        if (!contact) {
+            alert('Вы не зарегистрированы!');
+            tg.close();
+            return;
+        }
+    })();
+
     const textareas = document.querySelectorAll('textarea.auto-resize');
     textareas.forEach(textarea => {
         textarea.style.height = textarea.scrollHeight + 'px';

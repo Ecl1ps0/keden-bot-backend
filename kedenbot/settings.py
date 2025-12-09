@@ -11,6 +11,9 @@ https://docs.djangoproject.com/en/5.1/ref/settings/
 """
 import os, time
 from pathlib import Path
+from dotenv import load_dotenv
+
+load_dotenv()
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -133,6 +136,6 @@ SYMBOLS_RESTRICTION = 8000
 URL = os.getenv("BITRIX_API")
 TELEGRAM_API = os.getenv("TELEGRAM_API")
 DJANGO_URL = os.getenv("DJANGO_URL")
-REDIS_HOST = os.environ.get('REDIS_PORT', "localhost")
+REDIS_HOST = os.environ.get('REDIS_HOST', "localhost")
 REDIS_PORT = os.getenv("REDIS_PORT")
 REDIS_PASSWORD = os.getenv("REDIS_PASSWORD")

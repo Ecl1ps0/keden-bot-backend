@@ -15,9 +15,11 @@
         <p>Ваше заполненное заявление</p>
         <form id="user-form">
             {% for key, value in fields.items %}
-                <label for="{{ key }}">{{ key }}</label>
-                <textarea class="auto-resize" name="{{ key }}" id="{{ key }}" readonly>{{ value }}</textarea>
-                <br>
+                <div class="form-group">
+                    <label for="{{ key }}">{{ key }}</label>
+                    <textarea class="auto-resize" name="{{ key }}" id="{{ key }}" readonly>{{ value }}</textarea>
+                    <br>
+                </div>
             {% endfor %}
 
         <button type="submit" class="btn">Посмотреть файлы загруженные мной</button>

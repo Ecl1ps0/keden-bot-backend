@@ -46,7 +46,7 @@ def isValidLength(fields:dict):
     return True
 
 
-async def sendPostToCRM(url: str, request: HttpRequest, data: dict = None, headers: dict = None):
+async def sendPostToCRM(url: str, request: HttpRequest, data: dict = None, headers: dict = None) -> httpx.Response:
     try:
         async with httpx.AsyncClient() as client:
             response = await client.post(url, json=data, headers=headers)
@@ -101,27 +101,30 @@ async def RegisterView(request: HttpRequest):
 
 @csrf_exempt
 async def fetchContactId(request: HttpRequest):
-    if request.method == 'GET':
-        chat_id = request.GET.get('UF_CRM_CHAT_ID')
-        if not chat_id or chat_id=='undefined':
-            return JsonResponse({'error': 'UF_CRM_CHAT_ID is required'}, status=400)
+    if request.method != 'GET':
+        return HttpResponse(status=401)
 
-        headers = {
-                'Content-Type': 'application/json',
-                'Accept': 'application/json'
-        }
+    chat_id = request.GET.get('UF_CRM_CHAT_ID')
+    if not chat_id or chat_id=='undefined':
+        return JsonResponse({'error': 'UF_CRM_CHAT_ID is required'}, status=400)
 
-        async with httpx.AsyncClient() as client:
-            try:
-                response = await client.post(
-                    f'{URL}/crm.contact.list?filter[UF_CRM_CHAT_ID]={chat_id}', headers=headers
-                )
-                json_data = response.json()
-                return JsonResponse(json_data)
-            except httpx.RequestError as e:
-                return render(request, 'kedenwebpages/error.html', context={
-                    'status': 500
-                })
+    headers = {
+            'Content-Type': 'application/json',
+            'Accept': 'application/json'
+    }
+
+    async with httpx.AsyncClient() as client:
+        try:
+            response = await client.post(
+                f'{URL}/crm.contact.list?filter[UF_CRM_CHAT_ID]={chat_id}', headers=headers
+            )
+            json_data = response.json()
+            print(chat_id)
+            return JsonResponse(json_data)
+        except httpx.RequestError as e:
+            return render(request, 'kedenwebpages/error.html', context={
+                'status': 500
+            })
 
 
 @csrf_exempt
@@ -157,7 +160,7 @@ async def UVEDModules(request:HttpRequest):
             "role": 'uved',
             "message_id": message_id,
             "chat_id": chat_id,
-            "module_id": int(module_id),
+            "module_id": module_id,
             "django_url": DJANGO_URL
         }
 
@@ -166,8 +169,7 @@ async def UVEDModules(request:HttpRequest):
     if request.method == 'POST':
         msg_id = request.GET.get("msg_id")
         chat_id = request.GET.get("chat_id")
-        body = request.body
-        data = json.loads(body)
+        data = json.loads(request.body)
 
         # validation
         resultText = data.get('fields', {}).get('ufCrm168Text')
@@ -175,7 +177,8 @@ async def UVEDModules(request:HttpRequest):
             return JsonResponse({"error": "Text too long or missing"}, status=400)
 
         response = await sendPostToCRM(f'{URL}/crm.item.add', request=request, data=data)
-        json_data = response.json()
+        print(response)
+        json_data = json.loads(response.content)
         response = await sendPostToTelegram(f'{TELEGRAM_API}/deleteMessage?chat_id={chat_id}&message_id={msg_id}', request)
         return JsonResponse(json_data)
 
