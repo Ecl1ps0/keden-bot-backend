@@ -19,9 +19,11 @@
             <label for="{{ field }}">{{ field }}</label>
 
             {% if "БИН" in field or "ИИН" in field or "УИН" in field %}
-              <input class="auto-resize" name="{{ field }}" id="{{ field }}" rows="1" maxlength="1000" pattern="^(\d{12}|\d{4}[A-Z]{2}\d{6})$" placeholder="000000000000" title="Некорректный формат ИИН/БИН/УИН"></input>
+              <input class="auto-resize" name="{{ field }}" id="{{ field }}" rows="1" maxlength="1000" pattern="^(\d{12}|\d{4}[A-Z]{2}\d{6})$" placeholder="000000000000" title="Некорректный формат ИИН/БИН/УИН">
             {% elif "ТНВЭД" in field %}
-              <input class="auto-resize" name="{{ field }}" id="{{ field }}" rows="1" maxlength="1000" pattern="\d{2,4,6,8,10}" title="Некорректный формат ИИН/БИН"></textarea>
+              <input class="auto-resize" name="{{ field }}" id="{{ field }}" rows="1" maxlength="1000" pattern="\d{2,4,6,8,10}" title="Некорректный формат ИИН/БИН">
+            {% elif "Описание проблемы" in field %}
+              <textarea class="auto-resize" name="{{ field }}" id="{{ field }}" rows="1" minlength="15" maxlength="1000"></textarea>
             {% else %}
               <textarea class="auto-resize" name="{{ field }}" id="{{ field }}" rows="1" maxlength="1000"></textarea>
             {% endif %}
