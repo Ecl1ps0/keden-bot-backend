@@ -87,6 +87,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
         let data = {
             entityTypeId: 1444,
+            assignedById: 384,
             fields: {
                 ufCrm168Text: resultText,
                 ufCrm168FioFromTg: user_name,
